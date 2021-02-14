@@ -1,14 +1,18 @@
 const Item = require('../models/item')
+const mongoConnect = require('../util/database').mongoConnect;
 
 exports.getHomepage = async (req, res) => {
-  Item.getAllItems()
-    .then((result) => {
-      res.send({items: result})
-    })
-    .catch((err) => {
-      res.statusCode = 500;
-      res.send({error: err});
-    });
+  mongoConnect(() => {
+    Item.getAllItems()
+      .then((result) => {
+        res.send({items: result})
+      })
+      .catch((err) => {
+        res.statusCode = 500;
+        res.send({error: err});
+      });
+  });
+
 }
 
 exports.updateItem = async (req, res) => {
