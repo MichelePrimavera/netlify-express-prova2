@@ -4,11 +4,8 @@ const path = require('path');
 const serverless = require('serverless-http');
 const app = express();
 const bodyParser = require('body-parser');
-const authenticationRoutes = require('./routes/authentication');
-const homePageRoutes = require('./routes/homepage');
 const homePageController = require("./controller/homepage");
-
-const mongoConnect = require('./util/database').mongoConnect;
+const authenticationController = require('./controller/authentication');
 
 const router = express.Router();
 
@@ -19,14 +16,13 @@ app.use((req, res, next) => {
   next();
 });
 
-router.get('/prova', (req, res) => {
-  res.send({message: 'aweee'});
-});
-
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
 router.get('/homepage/items', homePageController.getHomepage);
-router.put('homepage/item', homePageController.updateItem);
-router.put('homepage/items', homePageController.updateItems);
+router.put('/homepage/item', homePageController.updateItem);
+router.put('/homepage/items', homePageController.updateItems);
+router.post('/auth/login', authenticationController.getLogin);
 
 router.post('/', (req, res) => res.json({ postBody: req.body }));
 

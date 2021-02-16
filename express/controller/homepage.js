@@ -16,45 +16,47 @@ exports.getHomepage = async (req, res) => {
 }
 
 exports.updateItem = async (req, res) => {
-  const {
-    idItem,
-    newValue,
-  } = req.body;
+  mongoConnect(() => {
+    const {
+      idItem,
+      newValue,
+    } = req.body;
 
-  if(idItem && newValue) {
+    if(idItem && newValue) {
 
-  } else {
-    res.statusCode = 400;
-    res.send({error: "Bad request. You must send an idItem and a newValue"});
-  }
-
+    } else {
+      res.statusCode = 400;
+      res.send({error: "Bad request. You must send an idItem and a newValue"});
+    }
+  });
 }
 
 exports.updateItems = async (req, res) => {
-  const items = req.body;
-  let errors = [];
+  mongoConnect(() => {
+    const items = req.body;
+    let errors = [];
 
-  console.log('items', req)
-  if(JSON.stringify(items) !== JSON.stringify({})) {
+    if(JSON.stringify(items) !== JSON.stringify({})) {
 
-    try {
-      Object.keys(items).map(async (key) => {
-        await Item.updateItem(key, items[key])
-      })
-    } catch (e) {
-      errors.push(e)
-    }
+      try {
+        Object.keys(items).map(async (key) => {
+          await Item.updateItem(key, items[key])
+        })
+      } catch (e) {
+        errors.push(e)
+      }
 
-    if(errors.length === 0) {
-      res.statusCode = 200;
-      res.send({message: 'Modifica effettuata con successo'})
+      if(errors.length === 0) {
+        res.statusCode = 200;
+        res.send({message: 'Modifica effettuata con successo'})
+      } else {
+        res.statusCode = 500;
+        res.send({error: 'Problema col database. Riprova.'});
+      }
     } else {
       res.statusCode = 500;
-      res.send({error: 'Problema col database. Riprova.'});
+      console.log('errore items')
+      res.send({error: "Non hai modificato nulla. Modifica qualcosa e poi reinvia"})
     }
-  } else {
-    res.statusCode = 500;
-    console.log('errore items')
-    res.send({error: "Non hai modificato nulla. Modifica qualcosa e poi reinvia"})
-  }
+  });
 }
