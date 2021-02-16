@@ -14,7 +14,7 @@ exports.getLogin = async (req, res) => {
         .then(user => {
           if (user.length > 0) {
             const id = user[0]['_id'];
-            const token = jwt.sign({ id }, process.env.JWT_KEY, {
+            const token = jwt.sign({ id }, 'jwtNicolaUnifamiliare', {
               expiresIn: 600,
             });
 
